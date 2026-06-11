@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import warnings
+
 import pytest
 from mcp.server.fastmcp.exceptions import ToolError
 
@@ -35,6 +37,22 @@ def test_inspect_model_input_file(call, model_id):
     assert "CFAST input file" in out
     assert "&COMP" in out
     assert "\x1b" not in out  # no ANSI codes (pretty_print=False)
+
+
+def test_run_model_no_usable_output(call, model_id, registry, monkeypatch):
+    def fake_run(file_name=None, timeout=None):
+        warnings.warn(
+            "CFAST execution exceeded timeout of 1 seconds.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        return {"compartments": None, "devices": None}
+
+    monkeypatch.setattr(registry.get(model_id).model, "run", fake_run)
+    with pytest.raises(ToolError, match="no usable output") as excinfo:
+        call("run_model", model_id=model_id)
+    assert "exceeded timeout" in str(excinfo.value)
+    assert registry.get(model_id).run_results is None
 
 
 def test_get_results_before_run(call, model_id):
