@@ -88,7 +88,7 @@ src/cfast_mcp/
 - `add()` validates dependencies on every call. Required order: materials, then compartments, then wall vents and fires. `guard()` in `errors.py` turns the resulting `ValueError` into a message saying what to add first.
 - `view_cfast_input_file()` requires a prior `save()`. `inspect_model(show_input_file=True)` saves first and passes `pretty_print=False` to avoid ANSI codes in MCP responses.
 - Generated `.in`/output files live in a single per-process temp directory owned by the registry (`work_path`/`close`), created lazily on the first `save()`/`run()` and removed at interpreter exit. Each model's files are named `{model_id}.*`. `run_model` reports the directory and `get_model_files` lists it.
-- `run()` returns `None` on silent CFAST failure (no exception); `run_model` raises `ToolError` in that case.
+- `run()` raises on CFAST process failure, but on timeout it only warns and returns whatever output CSVs it can read — always a dict with every key, values possibly `None`/empty. `run_model` raises `ToolError` (including the captured warnings) when no output set is usable; partial results are reported as success with the timeout warning appended.
 - pycfast has no component-removal methods; do not implement `remove_*` tools.
 - Component ids must be unique within their type; duplicates raise `ValueError("Duplicate id ...")`.
 - `face` for wall vents: `FRONT`, `REAR`, `LEFT`, `RIGHT` (not `BACK`).

@@ -167,14 +167,16 @@ def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         except Exception as e:
             raise ToolError(f"CFAST run failed: {e}") from e
 
-        if not results:
+        produced = [k for k, v in results.items() if v is not None and not v.empty]
+        if not produced:
             raise ToolError(
-                "CFAST run produced no output. The simulation likely failed; "
-                "check the model with inspect_model(show_input_file=True)."
+                "CFAST ran but produced no usable output (all output sets are "
+                "missing or empty). Check the model with "
+                "inspect_model(show_input_file=True), or increase the timeout."
+                f"{format_warnings(caught)}"
             )
 
         entry.run_results = results
-        produced = [k for k, v in results.items() if v is not None and not v.empty]
         workdir = os.path.dirname(registry.work_path(model_id))
         header = (
             f"Run complete for '{model_id}'. "
