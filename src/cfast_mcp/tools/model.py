@@ -14,12 +14,6 @@ from ..registry import ModelRegistry
 from ..serialization import preview_key, summarize_column, summarize_results
 
 
-def _safe_basename(title: str) -> str:
-    """Return a filesystem-safe ``.in`` basename derived from the title."""
-    safe = "".join(c if c.isalnum() else "_" for c in title) or "model"
-    return f"{safe}.in"
-
-
 def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
     """Register create_model, inspect_model, run_model and get_results."""
 
@@ -95,9 +89,8 @@ def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
             model = CFASTModel(
                 simulation_environment=env,
                 compartments=[room],
-                file_name=_safe_basename(title),
             )
-        model_id = registry.create(model, title)
+        model_id = registry.create(model)
         return (
             f"Created model '{model_id}' (title: {title!r}).\n{model.summary()}"
             f"{format_warnings(caught)}"
