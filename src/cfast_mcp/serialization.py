@@ -59,6 +59,11 @@ def summarize_column(key: str, column: str, df: pd.DataFrame) -> str:
         )
 
     series = df[column]
+    if series.dtype.kind not in "biufc":
+        raise ValueError(
+            f"Column '{column}' in '{key}' is not numeric; "
+            "preview the key without a column instead."
+        )
     idx_max = series.idxmax()
     lines = [
         f"'{key}' / column '{column}':",
