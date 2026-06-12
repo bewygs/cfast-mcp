@@ -95,8 +95,8 @@ def register_device_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             Confirmation, the updated model summary, and any warnings.
         """
-        entry = registry.get(model_id)
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             device = Device(
                 id=id,
                 comp_id=comp_id,
@@ -197,7 +197,6 @@ def register_device_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             Confirmation, the updated model summary, and any warnings.
         """
-        entry = registry.get(model_id)
         updates: dict[str, object] = {
             name: value
             for name, value in (
@@ -222,6 +221,7 @@ def register_device_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
                 "No parameters to update; provide at least one field to change."
             )
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             new_model = entry.model.update_device_params(device_id, **updates)
         registry.set(model_id, new_model)
         return (

@@ -81,8 +81,8 @@ def register_mechanical_vent_tools(mcp: FastMCP, registry: ModelRegistry) -> Non
         str
             Confirmation, the updated model summary, and any warnings.
         """
-        entry = registry.get(model_id)
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             vent = MechanicalVent(
                 id=id,
                 comps_ids=[comp_from, comp_to],
@@ -169,7 +169,6 @@ def register_mechanical_vent_tools(mcp: FastMCP, registry: ModelRegistry) -> Non
         str
             Confirmation, the updated model summary, and any warnings.
         """
-        entry = registry.get(model_id)
         if (comp_from is None) != (comp_to is None):
             raise ToolError(
                 "To change the connection, provide both comp_from and comp_to "
@@ -196,6 +195,7 @@ def register_mechanical_vent_tools(mcp: FastMCP, registry: ModelRegistry) -> Non
                 "No parameters to update; provide at least one field to change."
             )
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             new_model = entry.model.update_mechanical_vent_params(vent_id, **updates)
         registry.set(model_id, new_model)
         return (

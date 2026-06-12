@@ -122,7 +122,8 @@ def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             The model summary, optionally followed by the input file.
         """
-        entry = registry.get(model_id)
+        with guard():
+            entry = registry.get(model_id)
         summary: str = entry.model.summary()
         if not show_input_file:
             return summary
@@ -158,7 +159,8 @@ def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             A bounded summary of the produced output sets.
         """
-        entry = registry.get(model_id)
+        with guard():
+            entry = registry.get(model_id)
         try:
             with warnings.catch_warnings(record=True) as caught:
                 warnings.simplefilter("always")
@@ -214,7 +216,8 @@ def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             Either a bounded preview of the key or single-column statistics.
         """
-        entry = registry.get(model_id)
+        with guard():
+            entry = registry.get(model_id)
         if entry.run_results is None:
             raise ToolError("No results yet. Run the model first with run_model.")
 
@@ -228,10 +231,8 @@ def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
 
         if column is None:
             return preview_key(key, df)
-        try:
+        with guard():
             return summarize_column(key, column, df)
-        except KeyError as e:
-            raise ToolError(str(e)) from e
 
     @mcp.tool()
     def get_model_files(model_id: str) -> str:
@@ -254,7 +255,8 @@ def register_model_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
             The working directory and the names of the files belonging to
             the model.
         """
-        registry.get(model_id)
+        with guard():
+            registry.get(model_id)
         workdir = os.path.dirname(registry.work_path(model_id))
         names = sorted(
             name

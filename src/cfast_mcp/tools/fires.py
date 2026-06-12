@@ -85,8 +85,8 @@ def register_fire_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
             Confirmation, the updated model summary, and any warnings (for
             example a fire located outside the compartment footprint).
         """
-        entry = registry.get(model_id)
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             fire = Fire(
                 id=id,
                 comp_id=comp_id,
@@ -182,7 +182,6 @@ def register_fire_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
             Confirmation, the updated model summary, and any warnings (for
             example a fire located outside the compartment footprint).
         """
-        entry = registry.get(model_id)
         updates: dict[str, object] = {
             name: value
             for name, value in (
@@ -205,6 +204,7 @@ def register_fire_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
                 "No parameters to update; provide at least one field to change."
             )
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             new_model = entry.model.update_fire_params(id, **updates)
         registry.set(model_id, new_model)
         return (

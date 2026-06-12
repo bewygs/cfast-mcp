@@ -57,8 +57,8 @@ def register_material_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             Confirmation, the updated model summary, and any warnings.
         """
-        entry = registry.get(model_id)
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             mat = Material(
                 id=id,
                 material=material,
@@ -120,7 +120,6 @@ def register_material_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             Confirmation, the updated model summary, and any warnings.
         """
-        entry = registry.get(model_id)
         updates = {
             name: value
             for name, value in (
@@ -137,6 +136,7 @@ def register_material_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
                 "No parameters to update; provide at least one field to change."
             )
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             new_model = entry.model.update_material_params(material_id, **updates)
         registry.set(model_id, new_model)
         return (

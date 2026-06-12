@@ -71,8 +71,8 @@ def register_wall_vent_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
             raise ToolError(
                 f"face must be one of FRONT, REAR, LEFT, RIGHT — got {face!r}."
             )
-        entry = registry.get(model_id)
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             vent = WallVent(
                 id=id,
                 comps_ids=[comp_a, comp_b],
@@ -144,7 +144,6 @@ def register_wall_vent_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
         str
             Confirmation, the updated model summary, and any warnings.
         """
-        entry = registry.get(model_id)
         if (comp_a is None) != (comp_b is None):
             raise ToolError(
                 "To change the connection, provide both comp_a and comp_b "
@@ -174,6 +173,7 @@ def register_wall_vent_tools(mcp: FastMCP, registry: ModelRegistry) -> None:
                 "No parameters to update; provide at least one field to change."
             )
         with guard_warnings() as caught:
+            entry = registry.get(model_id)
             new_model = entry.model.update_wall_vent_params(vent_id, **updates)
         registry.set(model_id, new_model)
         return (
