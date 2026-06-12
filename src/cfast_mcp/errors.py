@@ -6,9 +6,7 @@ import warnings
 from collections.abc import Iterator
 from contextlib import contextmanager
 
-
-class ToolError(Exception):
-    """Error message intended for the MCP client."""
+from mcp.server.fastmcp.exceptions import ToolError
 
 
 @contextmanager

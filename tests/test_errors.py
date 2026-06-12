@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import pytest
+from mcp.server.fastmcp.exceptions import ToolError
 
-from cfast_mcp.errors import ToolError, guard
+from cfast_mcp.errors import guard
 
 
 def test_no_exception_passes_through():

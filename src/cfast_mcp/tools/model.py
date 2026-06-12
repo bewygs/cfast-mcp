@@ -6,9 +6,10 @@ import os
 import warnings
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.exceptions import ToolError
 from pycfast import CFASTModel, Compartment, SimulationEnvironment
 
-from ..errors import ToolError, format_warnings, guard_warnings
+from ..errors import format_warnings, guard, guard_warnings
 from ..registry import ModelRegistry
 from ..serialization import preview_key, summarize_column, summarize_results
 

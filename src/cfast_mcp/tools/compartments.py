@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.exceptions import ToolError
 from pycfast import Compartment
 
-from ..errors import ToolError, format_warnings, guard_warnings
+from ..errors import format_warnings, guard_warnings
 from ..registry import ModelRegistry
 
 
