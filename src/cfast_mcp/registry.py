@@ -24,7 +24,6 @@ class ModelEntry:
     """A model and the metadata tracked alongside it."""
 
     model: CFASTModel
-    title: str
     last_saved_path: str | None = None
     run_results: dict[str, pd.DataFrame | None] | None = None
 
@@ -50,11 +49,11 @@ class ModelRegistry:
             shutil.rmtree(self._work_root, ignore_errors=True)
             self._work_root = None
 
-    def create(self, model: CFASTModel, title: str) -> str:
+    def create(self, model: CFASTModel) -> str:
         """Register a new built model and return its new ``model_id``."""
         self._counter += 1
         model_id = f"m{self._counter}"
-        self._entries[model_id] = ModelEntry(model=model, title=title)
+        self._entries[model_id] = ModelEntry(model=model)
         return model_id
 
     def get(self, model_id: str) -> ModelEntry:
