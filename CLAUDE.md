@@ -6,8 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 An MCP server built around [pycfast](https://github.com/bewygs/pycfast), a Python interface for CFAST (Consolidated Fire and Smoke Transport, NIST). It exposes tools that let an LLM build a CFAST model step by step, inspect it, run it, and read results.
 
-The pycfast source is available locally at `/home/bwygas/pycfast`. Read it directly to check signatures, defaults, and validation logic.
-
 ## Commands
 
 ```bash
@@ -53,34 +51,16 @@ src/cfast_mcp/
     surface_connections.py       # add_surface_connection, update_surface_connection
 ```
 
-### Tools
+The tool inventory is the module list above; each tool's own docstring is the source of truth for its parameters. The non-obvious behaviours are in the constraints below.
 
-| Tool | Purpose |
-|---|---|
-| `create_model` | New model + first compartment, returns `model_id` |
-| `update_simulation` | Edit the simulation environment (title, time, ambient conditions); only provided params change |
-| `add_material` | Add a `Material`; must exist before a compartment references it |
-| `update_material` | Edit an existing `Material` by id (thermophysical props); only provided params change |
-| `add_compartment` | Add a `Compartment`; must exist before vents/fires reference it |
-| `update_compartment` | Edit an existing `Compartment` by id (e.g. attach surfaces to the first one); only provided params change |
-| `add_wall_vent` | Add a `WallVent`; `comp_b` may be `"OUTSIDE"` |
-| `update_wall_vent` | Edit an existing `WallVent` by id (geometry; connection via both `comp_a`+`comp_b`); only provided params change |
-| `add_ceiling_floor_vent` | Add a `CeilingFloorVent` (vertical flow); `comp_bottom` may be `"OUTSIDE"` |
-| `update_ceiling_floor_vent` | Edit an existing `CeilingFloorVent` by id (connection via both `comp_top`+`comp_bottom`); only provided params change |
-| `add_mechanical_vent` | Add a `MechanicalVent` (fan); `comp_from`/`comp_to` may be `"OUTSIDE"` |
-| `update_mechanical_vent` | Edit an existing `MechanicalVent` by id (connection via both `comp_from`+`comp_to`); only provided params change |
-| `add_fire` | Add a `Fire`; `data_table` columns: TIME, HRR, HEIGHT, AREA, CO_YIELD, SOOT_YIELD, HCN_YIELD, HCL_YIELD, TRACE_YIELD |
-| `update_fire` | Edit an existing `Fire` by instance id (HRR curve, chemistry, location, comp_id); only provided params change |
-| `add_device` | Add a `Device` (target `PLATE`/`CYLINDER` or detector `HEAT_DETECTOR`/`SMOKE_DETECTOR`/`SPRINKLER`); pycfast validates per-type requirements |
-| `update_device` | Edit an existing `Device` by id; only provided params change |
-| `add_surface_connection` | Add a `SurfaceConnection` (`WALL`/`FLOOR` conductive heat transfer); no id |
-| `update_surface_connection` | Edit a `SurfaceConnection` by 0-based index (it has no id); only provided params change |
-| `inspect_model` | `model.summary()`, optionally the `.in` file |
-| `run_model` | Run CFAST, store results in the registry |
-| `get_results` | Bounded read of stored results (preview or per-column stats) |
-| `get_model_files` | List the model's on-disk files and their working directory |
+### Tool behaviours and constraints inherited from pycfast
 
-### Constraints inherited from pycfast
+- Every `update_*` tool is a partial edit: only the parameters you pass change.
+- Vent endpoints accepting the `"OUTSIDE"` sentinel: wall vent `comp_b`, ceiling/floor vent `comp_bottom`, mechanical vent `comp_from`/`comp_to`.
+- Re-pointing a vent's connection in an `update_*` tool requires passing both endpoints together (wall: `comp_a`+`comp_b`; ceiling/floor: `comp_top`+`comp_bottom`; mechanical: `comp_from`+`comp_to`).
+- `SurfaceConnection` has no id — `update_surface_connection` selects by 0-based index.
+- `add_fire` `data_table` columns: TIME, HRR, HEIGHT, AREA, CO_YIELD, SOOT_YIELD, HCN_YIELD, HCL_YIELD, TRACE_YIELD.
+- `Device` is either a target (`PLATE`/`CYLINDER`) or a detector (`HEAT_DETECTOR`/`SMOKE_DETECTOR`/`SPRINKLER`); pycfast validates per-type requirements.
 
 - The registry is stateful: a `model_id` (`m1`, `m2`, ...) is returned at creation and passed to every subsequent tool. It lives for the server process lifetime only.
 - `CFASTModel` is immutable: `model.add(component)` returns a new model. Every `add_*` tool must reassign with `registry.set(model_id, ...)`.
@@ -111,6 +91,8 @@ Do not retest pycfast's own validation or the mcp library — only the tool laye
 
 ## Future scope
 
-Deliberate omissions (kept simple, can be added uniformly later): the vent open/close-criterion machinery (`open_close_criterion`/`time`/`fraction`/`set_point`/`device_id`/`pre_fraction`/`post_fraction`) on all vent types; the DIAG-only device fields (`adiabatic`, `convection_coefficients`); multi-layer compartment materials. Known pycfast limitation: `update_material_params`'s selector parameter is named `material`, which shadows the descriptive-name field, so `update_material` cannot edit the name (only thermophysical props).
+Deliberate omissions (kept simple, can be added uniformly later): the vent open/close-criterion machinery (`open_close_criterion`/`time`/`fraction`/`set_point`/`device_id`/`pre_fraction`/`post_fraction`) on all vent types; the triggered-ignition `Fire` fields (`ignition_criterion`/`set_point`/`device_id`); the DIAG-only device fields (`adiabatic`, `convection_coefficients`); multi-layer compartment materials; the remaining `SimulationEnvironment` parameters (`print`, `smokeview`, `spreadsheet`, `init_pressure`, `adiabatic`, `max_time_step`, `lower_oxygen_limit`) — `spreadsheet` (CSV output interval, hence the time resolution of `get_results`) is the priority candidate; the remaining `Compartment` parameters (`shaft`, `hall`, `leak_area_ratio`, `cross_sect_areas`/`cross_sect_heights`). Known pycfast limitation: `update_material_params`'s selector parameter is named `material`, which shadows the descriptive-name field, so `update_material` cannot edit the name (only thermophysical props).
+
+Possible future change: return a compact confirmation (per-type counts) from `add_*`/`update_*` instead of the full `model.summary()`, to cut token cost on large models (`inspect_model` already provides the full view).
 
 Still out of scope: `import_model_from_file`, `list_models`/`delete_model`, MCP Resources and Prompts.
