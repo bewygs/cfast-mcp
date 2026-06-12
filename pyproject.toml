@@ -140,9 +140,5 @@ warn_unreachable = true
 strict_equality = true
 
 [[tool.mypy.overrides]]
-module = "tests.*"
-disallow_untyped_defs = false
-
-[[tool.mypy.overrides]]
 module = "pycfast.*"
 ignore_missing_imports = true
