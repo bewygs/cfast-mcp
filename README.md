@@ -20,8 +20,9 @@ Ask your assistant something like:
 > growing to 1 MW in 300 s. Run it and give me the peak upper-layer temperature then
 > show me the folder where you create the file, so I can inspect it.
 
-Results will look like this:
+Results will probably look like this:
 
+<img width="1920" height="944" alt="image" src="https://github.com/user-attachments/assets/9f4c87b3-c722-4153-b75b-53c75f9cb70e" />
 
 ## Tools
 
