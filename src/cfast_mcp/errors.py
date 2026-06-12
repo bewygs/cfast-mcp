@@ -20,6 +20,8 @@ def guard() -> Iterator[None]:
         raise ToolError(_explain_value_error(str(e))) from e
     except FileNotFoundError as e:
         raise ToolError(str(e)) from e
+    except KeyError as e:
+        raise ToolError(str(e.args[0]) if e.args else str(e)) from e
     except IndexError as e:
         raise ToolError(str(e)) from e
     except TypeError as e:
