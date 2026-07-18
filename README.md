@@ -9,8 +9,15 @@
 [![PyPI](https://img.shields.io/pypi/v/cfast-mcp)](https://pypi.org/project/cfast-mcp/)
 [![codecov](https://codecov.io/gh/bewygs/cfast-mcp/graph/badge.svg?token=6D621ZUJFT)](https://codecov.io/gh/bewygs/cfast-mcp)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/bewygs/cfast-mcp/blob/main/LICENSE)
+[![🤗 Demo](https://img.shields.io/badge/🤗%20Demo-Live%20Space-green)](https://huggingface.co/spaces/bewygs/fire-simulation-assistant)
 
 **CFAST MCP** is an [MCP](https://modelcontextprotocol.io/) server that lets an AI assistant build, run, and analyze [**CFAST**](https://pages.nist.gov/cfast/) (Consolidated Fire and Smoke Transport, NIST) fire simulations through conversation. It is built on top of [**PyCFAST**](https://github.com/bewygs/pycfast) and exposes the **CFAST** model as a set of tools. The AI assistant is able to create a model, add compartments, materials, vents, fires and devices step by step, run CFAST, and make summaries of the results.
+
+## Live demo
+
+A live demo using the MCP server is available on Hugging Face Spaces. You can try it out without any installation:
+
+[![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-lg.svg)](https://huggingface.co/spaces/bewygs/fire-simulation-assistant)
 
 ## Example
 
