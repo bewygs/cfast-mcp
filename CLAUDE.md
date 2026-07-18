@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 An MCP server built around [pycfast](https://github.com/bewygs/pycfast), a Python interface for CFAST (Consolidated Fire and Smoke Transport, NIST). It exposes tools that let an LLM build a CFAST model step by step, inspect it, run it, and read results.
 
+The pycfast source is available at [https://github.com/bewygs/pycfast](https://github.com/bewygs/pycfast). You can use gh cli to read it directly to check signatures, defaults, and validation logic.
+
 ## Commands
 
 ```bash
